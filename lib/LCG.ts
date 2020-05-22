@@ -13,8 +13,11 @@
  *  @author     Paweł Kuźnik <pawel.kuznik@gmail.com>
  */
 
+// the dependency
+import { RNG } from "./RNG";
+
 // export the class
-export class LCG {
+export class LCG implements RNG {
 
     /**
      *  The GCC constants. They are needed for it to work. It's somewhat magic.
