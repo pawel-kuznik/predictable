@@ -1,8 +1,6 @@
 /**
  *  This is a quick function to generate an uuid based on our predicatable
  *  random number generator.
- *
- *  @author Paweł Kuźnik <pawel.kuznik@gmail.com>
  */
 
 // import the dependency

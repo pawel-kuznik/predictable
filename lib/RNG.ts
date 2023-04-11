@@ -1,7 +1,5 @@
 /**
  *  This is an interface for a RNG.
- *
- *  @author     Paweł Kuźnik <pawel.kuznik@gmail.com>
  */
 
 // export the interface
@@ -16,4 +14,10 @@ export interface RNG {
      *  Generate a new random number. Any number.
      */
     next() : number;
+
+    /**
+     *  This is an additional function to make the LCG compatible with the expected output
+     *  of Math.random function. The result of this function is alwasy beween 0 and 1 (0 including).
+     */
+    random() : number;
 };

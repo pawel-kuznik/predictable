@@ -9,8 +9,6 @@
  *  WATCH OUT: DO NOT USE IT FOR CRYPTO!!! THIS IS IDIOTICALLY UNSAFE FOR CRYPTO!!!
  *
  *  @see        https://en.wikipedia.org/wiki/Linear_congruential_generator
- *
- *  @author     Paweł Kuźnik <pawel.kuznik@gmail.com>
  */
 
 // the dependency
@@ -62,6 +60,14 @@ export class LCG implements RNG {
      *  Get access to the original seed.
      */
     get seed() : number { return this._seed; }
+
+    /**
+     *  This is an additional function to make the LCG compatible with the expected output
+     *  of Math.random function. The result of this function is alwasy beween 0 and 1 (0 including).
+     */
+    random() : number {
+        return Math.abs(this.next()) / Number.MAX_SAFE_INTEGER;
+    }
 
     /**
      *  Generate next value within a special range of numbers. The range is inclusive.

@@ -69,4 +69,22 @@ describe('LCG', () => {
             expect(count).to.be.equal(0);
         }).timeout(10);
     });
+
+    describe('.random()', () => {
+
+        it ('should always generate numbers in [0, 1) range', () => {
+
+            const generator = new LCG();
+
+            let count = 1000;
+
+            while(count) {
+
+                const result = generator.random();
+                expect(result).to.be.greaterThanOrEqual(0).and.lessThan(1);
+
+                count--;
+            }
+        });
+    });
 });
