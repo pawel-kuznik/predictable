@@ -5,6 +5,10 @@
  *
  *  This "randomness" is useful when desining games. Some aspects should appear
  *  random to a human, but be completely deterministic for a machine.
+ * 
+ *  Keep in mind that this algorithm does very poorly in spectral test. Meaning that
+ *  when results would be plotted in a 2 or more dimensions the results will form lines.
+ *  This pretty much excludes this algorithm for 2D or 3D terrain generation.
  *
  *  WATCH OUT: DO NOT USE IT FOR CRYPTO!!! THIS IS IDIOTICALLY UNSAFE FOR CRYPTO!!!
  *
@@ -13,6 +17,7 @@
 
 // the dependency
 import { RNG } from "./RNG";
+import { toMathRandom } from "./toMathRandom";
 
 // export the class
 export class LCG implements RNG {
@@ -66,7 +71,7 @@ export class LCG implements RNG {
      *  of Math.random function. The result of this function is alwasy beween 0 and 1 (0 including).
      */
     random() : number {
-        return Math.abs(this.next()) / Number.MAX_SAFE_INTEGER;
+        return toMathRandom(this.next());
     }
 
     /**
@@ -88,15 +93,13 @@ export class LCG implements RNG {
         // should we make sure the next value is in certain range?
         if (params.length > 0) {
 
-            // assign params to local variables
-            let start = params[0], end = params[1];
-
             // an obvious choice would be to just modulu the current state and
             // output, but apparently the randomness isn't very good (it's also
             // a criticizm on the wiki page). So we do something more special.
+            // @see https://en.wikipedia.org/wiki/Linear_congruential_generator
 
             // calculate the size of the range
-            let size = end - start;
+            let size = params[1] - params[0];
             let floatState = this._current / this._m;
 
             // this is somewhat special bit. we calculate an int again from
@@ -105,10 +108,10 @@ export class LCG implements RNG {
             // when we have this we just need to move it by start, and viola!
             // This seems to be better, but it might be that there is a better
             // improvement.
-            return start + Math.floor(floatState * size);
-        }
+            return params[0] + Math.floor(floatState * size);
+        }           
 
-        // return the new number
+        // return current state
         return this._current;
     }
 };
