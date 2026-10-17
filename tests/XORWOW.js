@@ -70,6 +70,41 @@ describe('XORWOW', () => {
         }).timeout(10);
     });
 
+    describe('seeding', () => {
+
+        const sequence = (generator) => Array.from({ length: 10 }, () => generator.next());
+
+        it('should repeat the sequence for the same seed', () => {
+
+            expect(sequence(new XORWOW(1234))).to.deep.equal(sequence(new XORWOW(1234)));
+        });
+
+        it('should give unrelated sequences for adjacent seeds', () => {
+
+            const a = sequence(new XORWOW(1));
+            const b = sequence(new XORWOW(2));
+
+            a.forEach((value, index) => expect(value).to.not.equal(b[index]));
+        });
+
+        it('should pick different random seeds when unseeded', () => {
+
+            expect(sequence(new XORWOW())).to.not.deep.equal(sequence(new XORWOW()));
+        });
+
+        it('should produce uint32 values from the first call', () => {
+
+            const generator = new XORWOW(0);
+
+            for (let i = 0; i < 1000; i++) {
+
+                const value = generator.next();
+                expect(Number.isInteger(value)).to.equal(true);
+                expect(value).to.be.at.least(0).and.below(2 ** 32);
+            }
+        });
+    });
+
     describe('.random()', () => {
 
         it('should always generate numbers in [0, 1) range', () => {

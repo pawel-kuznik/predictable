@@ -1,6 +1,6 @@
 {
   "name": "@pawel-kuznik/predictable",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "",
   "main": "build/index.js",
   "types": "build/index.d.ts",

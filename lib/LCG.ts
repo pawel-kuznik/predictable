@@ -16,11 +16,10 @@
  */
 
 // the dependency
-import { RNG } from "./RNG";
-import { toMathRandom } from "./toMathRandom";
+import { BaseRNG } from "./BaseRNG";
 
 // export the class
-export class LCG implements RNG {
+export class LCG extends BaseRNG {
 
     /**
      *  The GCC constants. They are needed for it to work. It's somewhat magic.
@@ -54,8 +53,10 @@ export class LCG implements RNG {
      */
     constructor(seed:number|null = null) {
 
+        super();
+
         // assign seed
-        this._seed = seed || Math.floor(Math.random() * (this._m - 1));
+        this._seed = seed ?? Math.floor(Math.random() * (this._m - 1));
 
         // assign first state. It's first "generated" number. It's seed.
         this._current = this._seed;
@@ -71,7 +72,7 @@ export class LCG implements RNG {
      *  of Math.random function. The result of this function is alwasy beween 0 and 1 (0 including).
      */
     random() : number {
-        return toMathRandom(this.next());
+        return this.next() / this._m;
     }
 
     /**
@@ -87,29 +88,14 @@ export class LCG implements RNG {
     // implementation
     next(...params:any) : number {
 
+        // should we make sure the next value is in certain range? Scaling a
+        // float in [0, 1) is better than modulo of the state, as the low bits
+        // of an LCG are not very random.
+        // @see https://en.wikipedia.org/wiki/Linear_congruential_generator
+        if (params.length > 0) return params[0] + Math.floor(this.random() * (params[1] - params[0] + 1));
+
         // generate new state
         this._current = (this._a * this._current + this._c) % this._m;
-
-        // should we make sure the next value is in certain range?
-        if (params.length > 0) {
-
-            // an obvious choice would be to just modulu the current state and
-            // output, but apparently the randomness isn't very good (it's also
-            // a criticizm on the wiki page). So we do something more special.
-            // @see https://en.wikipedia.org/wiki/Linear_congruential_generator
-
-            // calculate the size of the range
-            let size = params[1] - params[0];
-            let floatState = this._current / this._m;
-
-            // this is somewhat special bit. we calculate an int again from
-            // the float we created by multiplying by the range size. Thanks to
-            // floatState be always below 1, it will never exceed the actual range.
-            // when we have this we just need to move it by start, and viola!
-            // This seems to be better, but it might be that there is a better
-            // improvement.
-            return params[0] + Math.floor(floatState * size);
-        }           
 
         // return current state
         return this._current;
